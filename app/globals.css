@@ -1,21 +1,89 @@
 @import "tailwindcss";
 
+/* ── Light mode (default) ───────────────────────────────────── */
 :root {
-  --bg-primary: #111213;
-  --bg-secondary: #1a1b1e;
-  --bg-card: #1f2023;
-  --bg-card-hover: #252629;
-  --border: #2e3035;
-  --border-subtle: #242528;
-  --text-primary: #e8e9eb;
-  --text-secondary: #8b8f98;
-  --text-muted: #5a5e68;
-  --accent-orange: #e8622a;
-  --accent-orange-dim: rgba(232, 98, 42, 0.12);
-  --accent-blue: #4a90d9;
-  --accent-blue-dim: rgba(74, 144, 217, 0.12);
-  --accent-teal: #2ab5a0;
-  --accent-teal-dim: rgba(42, 181, 160, 0.12);
+  --bg-primary: #f0f2f6;
+  --bg-secondary: #ffffff;
+  --bg-card: #ffffff;
+  --bg-card-hover: #f6f7f9;
+  --border: #d8dce6;
+  --border-subtle: #e6e9ef;
+  --text-primary: #0d1117;
+  --text-secondary: #485068;
+  --text-muted: #8b92a8;
+  --accent-orange: #e04e1c;
+  --accent-orange-dim: rgba(224, 78, 28, 0.1);
+  --accent-blue: #2563eb;
+  --accent-blue-dim: rgba(37, 99, 235, 0.1);
+  --accent-teal: #0d9488;
+  --accent-teal-dim: rgba(13, 148, 136, 0.1);
+  --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.07), 0 1px 2px rgba(0, 0, 0, 0.04);
+  --shadow-md: 0 4px 14px rgba(0, 0, 0, 0.09), 0 2px 4px rgba(0, 0, 0, 0.05);
+}
+
+/* ── Dark mode — system preference ─────────────────────────── */
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg-primary: #08090c;
+    --bg-secondary: #0e1014;
+    --bg-card: #14161b;
+    --bg-card-hover: #1b1e24;
+    --border: #22262f;
+    --border-subtle: #181b21;
+    --text-primary: #e4e7ed;
+    --text-secondary: #818899;
+    --text-muted: #50566a;
+    --accent-orange: #f26030;
+    --accent-orange-dim: rgba(242, 96, 48, 0.13);
+    --accent-blue: #4d8ef5;
+    --accent-blue-dim: rgba(77, 142, 245, 0.13);
+    --accent-teal: #2dd4bf;
+    --accent-teal-dim: rgba(45, 212, 191, 0.13);
+    --shadow-sm: 0 1px 4px rgba(0, 0, 0, 0.4);
+    --shadow-md: 0 4px 18px rgba(0, 0, 0, 0.5);
+  }
+}
+
+/* ── Dark mode — explicit override ─────────────────────────── */
+[data-theme="dark"] {
+  --bg-primary: #08090c;
+  --bg-secondary: #0e1014;
+  --bg-card: #14161b;
+  --bg-card-hover: #1b1e24;
+  --border: #22262f;
+  --border-subtle: #181b21;
+  --text-primary: #e4e7ed;
+  --text-secondary: #818899;
+  --text-muted: #50566a;
+  --accent-orange: #f26030;
+  --accent-orange-dim: rgba(242, 96, 48, 0.13);
+  --accent-blue: #4d8ef5;
+  --accent-blue-dim: rgba(77, 142, 245, 0.13);
+  --accent-teal: #2dd4bf;
+  --accent-teal-dim: rgba(45, 212, 191, 0.13);
+  --shadow-sm: 0 1px 4px rgba(0, 0, 0, 0.4);
+  --shadow-md: 0 4px 18px rgba(0, 0, 0, 0.5);
+}
+
+/* ── Light mode — explicit override ────────────────────────── */
+[data-theme="light"] {
+  --bg-primary: #f0f2f6;
+  --bg-secondary: #ffffff;
+  --bg-card: #ffffff;
+  --bg-card-hover: #f6f7f9;
+  --border: #d8dce6;
+  --border-subtle: #e6e9ef;
+  --text-primary: #0d1117;
+  --text-secondary: #485068;
+  --text-muted: #8b92a8;
+  --accent-orange: #e04e1c;
+  --accent-orange-dim: rgba(224, 78, 28, 0.1);
+  --accent-blue: #2563eb;
+  --accent-blue-dim: rgba(37, 99, 235, 0.1);
+  --accent-teal: #0d9488;
+  --accent-teal-dim: rgba(13, 148, 136, 0.1);
+  --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.07), 0 1px 2px rgba(0, 0, 0, 0.04);
+  --shadow-md: 0 4px 14px rgba(0, 0, 0, 0.09), 0 2px 4px rgba(0, 0, 0, 0.05);
 }
 
 * {
@@ -29,7 +97,7 @@ body {
   min-height: 100vh;
   background-color: var(--bg-primary);
   color: var(--text-primary);
-  font-family: -apple-system, BlinkMacSystemFont, "Inter", "Segoe UI",
+  font-family: "Satoshi", -apple-system, BlinkMacSystemFont, "Segoe UI",
     Helvetica, Arial, sans-serif;
   -webkit-font-smoothing: antialiased;
 }

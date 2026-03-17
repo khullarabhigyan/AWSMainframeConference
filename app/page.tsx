@@ -1,36 +1,28 @@
 "use client";
 
-import { useState, useMemo } from "react";
+import { useState, useMemo, useEffect } from "react";
 import { sessions, tracks } from "@/lib/schedule";
 
-const TRACK_STYLES: Record<
-  string,
-  { accent: string; bg: string; badge: string }
-> = {
+const TRACK_STYLES: Record<string, { accent: string; dim: string }> = {
   business: {
-    accent: "#e8622a",
-    bg: "rgba(232,98,42,0.08)",
-    badge: "rgba(232,98,42,0.18)",
+    accent: "var(--accent-orange)",
+    dim: "var(--accent-orange-dim)",
   },
   tech1: {
-    accent: "#4a90d9",
-    bg: "rgba(74,144,217,0.08)",
-    badge: "rgba(74,144,217,0.18)",
+    accent: "var(--accent-blue)",
+    dim: "var(--accent-blue-dim)",
   },
   "tech1-d2": {
-    accent: "#4a90d9",
-    bg: "rgba(74,144,217,0.08)",
-    badge: "rgba(74,144,217,0.18)",
+    accent: "var(--accent-blue)",
+    dim: "var(--accent-blue-dim)",
   },
   tech2: {
-    accent: "#2ab5a0",
-    bg: "rgba(42,181,160,0.08)",
-    badge: "rgba(42,181,160,0.18)",
+    accent: "var(--accent-teal)",
+    dim: "var(--accent-teal-dim)",
   },
   "tech2-d2": {
-    accent: "#2ab5a0",
-    bg: "rgba(42,181,160,0.08)",
-    badge: "rgba(42,181,160,0.18)",
+    accent: "var(--accent-teal)",
+    dim: "var(--accent-teal-dim)",
   },
 };
 
@@ -54,10 +46,10 @@ function highlight(text: string, query: string): React.ReactNode {
       <mark
         key={i}
         style={{
-          background: "rgba(232,98,42,0.35)",
+          background: "var(--accent-orange-dim)",
           color: "inherit",
-          borderRadius: "2px",
-          padding: "0 1px",
+          borderRadius: "3px",
+          padding: "0 2px",
         }}
       >
         {part}
@@ -68,13 +60,67 @@ function highlight(text: string, query: string): React.ReactNode {
   );
 }
 
+function SunIcon() {
+  return (
+    <svg
+      width="15"
+      height="15"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="2"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    >
+      <circle cx="12" cy="12" r="4" />
+      <path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M6.34 17.66l-1.41 1.41M19.07 4.93l-1.41 1.41" />
+    </svg>
+  );
+}
+
+function MoonIcon() {
+  return (
+    <svg
+      width="14"
+      height="14"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="2"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    >
+      <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z" />
+    </svg>
+  );
+}
+
 export default function Home() {
   const [activeDay, setActiveDay] = useState<1 | 2>(1);
   const [activeTrack, setActiveTrack] = useState<FilterTrack>(ALL_TRACKS);
   const [query, setQuery] = useState("");
+  const [theme, setTheme] = useState<"light" | "dark">("dark");
+
+  useEffect(() => {
+    const stored = localStorage.getItem("theme");
+    if (stored === "light" || stored === "dark") {
+      setTheme(stored);
+    } else if (window.matchMedia("(prefers-color-scheme: dark)").matches) {
+      setTheme("dark");
+    } else {
+      setTheme("light");
+    }
+  }, []);
+
+  const toggleTheme = () => {
+    const next = theme === "dark" ? "light" : "dark";
+    setTheme(next);
+    document.documentElement.setAttribute("data-theme", next);
+    localStorage.setItem("theme", next);
+  };
 
   const trackFilterGroups: { id: FilterTrack; label: string }[] = [
-    { id: ALL_TRACKS, label: "All Tracks" },
+    { id: ALL_TRACKS, label: "All" },
     { id: "business", label: "Business" },
     { id: "tech1", label: "Technical 1" },
     { id: "tech2", label: "Technical 2" },
@@ -126,59 +172,104 @@ export default function Home() {
             maxWidth: 960,
             margin: "0 auto",
             padding: "28px 24px 24px",
+            display: "flex",
+            alignItems: "flex-start",
+            justifyContent: "space-between",
+            gap: 16,
           }}
         >
-          <div
+          <div>
+            <div
+              style={{
+                display: "flex",
+                alignItems: "center",
+                gap: 8,
+                marginBottom: 8,
+              }}
+            >
+              <span
+                style={{
+                  width: 6,
+                  height: 6,
+                  borderRadius: "50%",
+                  background: "var(--accent-orange)",
+                  display: "inline-block",
+                  flexShrink: 0,
+                }}
+              />
+              <span
+                style={{
+                  fontSize: 11,
+                  letterSpacing: "0.13em",
+                  color: "var(--accent-orange)",
+                  fontWeight: 700,
+                  textTransform: "uppercase",
+                }}
+              >
+                AWS Partner Conference
+              </span>
+            </div>
+            <h1
+              style={{
+                margin: 0,
+                fontSize: "clamp(22px, 4vw, 30px)",
+                fontWeight: 700,
+                color: "var(--text-primary)",
+                letterSpacing: "-0.025em",
+                lineHeight: 1.2,
+              }}
+            >
+              Mainframe Modernization
+            </h1>
+            <p
+              style={{
+                margin: "8px 0 0",
+                fontSize: 13,
+                color: "var(--text-muted)",
+                letterSpacing: "0.01em",
+                fontWeight: 500,
+              }}
+            >
+              Session Schedule — 2 Days · 3 Tracks · 22 Sessions
+            </p>
+          </div>
+
+          {/* Theme toggle */}
+          <button
+            onClick={toggleTheme}
+            aria-label={
+              theme === "dark" ? "Switch to light mode" : "Switch to dark mode"
+            }
             style={{
               display: "flex",
               alignItems: "center",
-              gap: 8,
-              marginBottom: 6,
-            }}
-          >
-            <span
-              style={{
-                width: 6,
-                height: 6,
-                borderRadius: "50%",
-                background: "var(--accent-orange)",
-                display: "inline-block",
-                flexShrink: 0,
-              }}
-            />
-            <span
-              style={{
-                fontSize: 11,
-                letterSpacing: "0.12em",
-                color: "var(--accent-orange)",
-                fontWeight: 600,
-                textTransform: "uppercase",
-              }}
-            >
-              AWS Partner Conference
-            </span>
-          </div>
-          <h1
-            style={{
-              margin: 0,
-              fontSize: "clamp(20px, 4vw, 28px)",
-              fontWeight: 700,
-              color: "var(--text-primary)",
-              letterSpacing: "-0.02em",
-            }}
-          >
-            Mainframe Modernization
-          </h1>
-          <p
-            style={{
-              margin: "6px 0 0",
-              fontSize: 13,
+              justifyContent: "center",
+              width: 36,
+              height: 36,
+              borderRadius: 8,
+              border: "1px solid var(--border-subtle)",
+              background: "var(--bg-card)",
+              cursor: "pointer",
               color: "var(--text-muted)",
-              letterSpacing: "0.01em",
+              flexShrink: 0,
+              marginTop: 2,
+              transition: "background 0.15s, color 0.15s, border-color 0.15s",
+            }}
+            onMouseEnter={(e) => {
+              const el = e.currentTarget as HTMLElement;
+              el.style.background = "var(--bg-card-hover)";
+              el.style.color = "var(--text-primary)";
+              el.style.borderColor = "var(--border)";
+            }}
+            onMouseLeave={(e) => {
+              const el = e.currentTarget as HTMLElement;
+              el.style.background = "var(--bg-card)";
+              el.style.color = "var(--text-muted)";
+              el.style.borderColor = "var(--border-subtle)";
             }}
           >
-            Session Schedule — 2 Days · 3 Tracks · 22 Sessions
-          </p>
+            {theme === "dark" ? <SunIcon /> : <MoonIcon />}
+          </button>
         </div>
       </header>
 
@@ -190,7 +281,8 @@ export default function Home() {
           zIndex: 10,
           background: "var(--bg-secondary)",
           borderBottom: "1px solid var(--border-subtle)",
-          backdropFilter: "blur(8px)",
+          backdropFilter: "blur(12px)",
+          WebkitBackdropFilter: "blur(12px)",
         }}
       >
         <div
@@ -200,7 +292,7 @@ export default function Home() {
             padding: "12px 24px",
             display: "flex",
             flexWrap: "wrap",
-            gap: 10,
+            gap: 8,
             alignItems: "center",
           }}
         >
@@ -208,7 +300,7 @@ export default function Home() {
           <div
             style={{
               display: "flex",
-              gap: 3,
+              gap: 2,
               background: "var(--bg-card)",
               padding: 3,
               borderRadius: 8,
@@ -220,16 +312,19 @@ export default function Home() {
                 key={d}
                 onClick={() => setActiveDay(d)}
                 style={{
-                  padding: "5px 16px",
+                  padding: "5px 18px",
                   borderRadius: 6,
                   border: "none",
                   cursor: "pointer",
                   fontSize: 13,
                   fontWeight: 600,
+                  fontFamily: "inherit",
                   transition: "all 0.15s",
                   background:
                     activeDay === d ? "var(--accent-orange)" : "transparent",
                   color: activeDay === d ? "#fff" : "var(--text-secondary)",
+                  boxShadow:
+                    activeDay === d ? "0 1px 4px rgba(0,0,0,0.15)" : "none",
                 }}
               >
                 Day {d}
@@ -241,7 +336,7 @@ export default function Home() {
           <div
             style={{
               display: "flex",
-              gap: 3,
+              gap: 2,
               background: "var(--bg-card)",
               padding: 3,
               borderRadius: 8,
@@ -249,6 +344,7 @@ export default function Home() {
             }}
           >
             {trackFilterGroups.map((t) => {
+              const isActive = activeTrack === t.id;
               const accentColor =
                 t.id === "business"
                   ? "var(--accent-orange)"
@@ -268,15 +364,15 @@ export default function Home() {
                     cursor: "pointer",
                     fontSize: 12,
                     fontWeight: 600,
+                    fontFamily: "inherit",
                     transition: "all 0.15s",
-                    background:
-                      activeTrack === t.id
-                        ? "var(--bg-card-hover)"
-                        : "transparent",
+                    background: isActive
+                      ? "var(--bg-card-hover)"
+                      : "transparent",
                     color:
-                      activeTrack === t.id && accentColor
+                      isActive && accentColor
                         ? accentColor
-                        : activeTrack === t.id
+                        : isActive
                         ? "var(--text-primary)"
                         : "var(--text-muted)",
                   }}
@@ -288,7 +384,7 @@ export default function Home() {
           </div>
 
           {/* Search */}
-          <div style={{ position: "relative", flex: 1, minWidth: 180 }}>
+          <div style={{ position: "relative", flex: 1, minWidth: 160 }}>
             <svg
               style={{
                 position: "absolute",
@@ -320,8 +416,11 @@ export default function Home() {
                 borderRadius: 8,
                 padding: "6px 32px",
                 fontSize: 13,
+                fontFamily: "inherit",
+                fontWeight: 400,
                 color: "var(--text-primary)",
                 outline: "none",
+                transition: "border-color 0.15s",
               }}
               onFocus={(e) =>
                 (e.target.style.borderColor = "var(--accent-orange)")
@@ -378,6 +477,7 @@ export default function Home() {
               color: "var(--text-muted)",
               marginBottom: 24,
               marginTop: -8,
+              fontWeight: 500,
             }}
           >
             {totalResults === 0
@@ -412,7 +512,7 @@ export default function Home() {
 
         {orderedTrackIds.map((trackId) => {
           const track = tracks.find((t) => t.id === trackId)!;
-          const style = TRACK_STYLES[trackId];
+          const trackStyle = TRACK_STYLES[trackId];
           const trackSessions = grouped.get(trackId)!;
 
           return (
@@ -424,8 +524,8 @@ export default function Home() {
                   alignItems: "center",
                   gap: 12,
                   marginBottom: 16,
-                  paddingBottom: 12,
-                  borderBottom: `1px solid ${style.accent}22`,
+                  paddingBottom: 14,
+                  borderBottom: `1px solid ${trackStyle.dim}`,
                 }}
               >
                 <div
@@ -433,54 +533,54 @@ export default function Home() {
                     width: 3,
                     height: 22,
                     borderRadius: 2,
-                    background: style.accent,
+                    background: trackStyle.accent,
                     flexShrink: 0,
                   }}
                 />
-                <div>
-                  <div
+                <div
+                  style={{
+                    display: "flex",
+                    alignItems: "center",
+                    gap: 8,
+                    flexWrap: "wrap",
+                  }}
+                >
+                  <span
                     style={{
-                      display: "flex",
-                      alignItems: "center",
-                      gap: 8,
-                      flexWrap: "wrap",
+                      fontSize: 15,
+                      fontWeight: 700,
+                      color: "var(--text-primary)",
+                      letterSpacing: "-0.02em",
                     }}
                   >
-                    <span
-                      style={{
-                        fontSize: 15,
-                        fontWeight: 700,
-                        color: "var(--text-primary)",
-                        letterSpacing: "-0.01em",
-                      }}
-                    >
-                      {track.name}
-                    </span>
+                    {track.name}
+                  </span>
+                  <span
+                    style={{
+                      fontSize: 10,
+                      fontWeight: 700,
+                      color: trackStyle.accent,
+                      background: trackStyle.dim,
+                      padding: "2px 8px",
+                      borderRadius: 4,
+                      letterSpacing: "0.06em",
+                      textTransform: "uppercase",
+                    }}
+                  >
+                    {track.code}
+                  </span>
+                  {track.level && (
                     <span
                       style={{
                         fontSize: 11,
-                        fontWeight: 600,
-                        color: style.accent,
-                        background: style.badge,
-                        padding: "2px 8px",
-                        borderRadius: 4,
-                        letterSpacing: "0.04em",
+                        color: "var(--text-muted)",
+                        fontWeight: 500,
+                        letterSpacing: "0.03em",
                       }}
                     >
-                      {track.code}
+                      {track.level}
                     </span>
-                    {track.level && (
-                      <span
-                        style={{
-                          fontSize: 11,
-                          color: "var(--text-muted)",
-                          letterSpacing: "0.04em",
-                        }}
-                      >
-                        {track.level}
-                      </span>
-                    )}
-                  </div>
+                  )}
                 </div>
               </div>
 
@@ -494,20 +594,31 @@ export default function Home() {
                       border: "1px solid var(--border-subtle)",
                       borderRadius: 10,
                       padding: "16px 18px",
-                      borderLeft: `3px solid ${style.accent}55`,
-                      transition: "border-left-color 0.15s, background 0.15s",
+                      borderLeft: `3px solid ${trackStyle.dim}`,
+                      boxShadow: "var(--shadow-sm)",
+                      transition:
+                        "border-left-color 0.15s, background 0.15s, box-shadow 0.15s",
                     }}
                     onMouseEnter={(e) => {
-                      (e.currentTarget as HTMLElement).style.borderLeftColor =
-                        style.accent;
-                      (e.currentTarget as HTMLElement).style.background =
-                        "var(--bg-card-hover)";
+                      const el = e.currentTarget as HTMLElement;
+                      el.style.setProperty(
+                        "border-left",
+                        `3px solid ${trackStyle.accent}`
+                      );
+                      el.style.setProperty(
+                        "background",
+                        "var(--bg-card-hover)"
+                      );
+                      el.style.setProperty("box-shadow", "var(--shadow-md)");
                     }}
                     onMouseLeave={(e) => {
-                      (e.currentTarget as HTMLElement).style.borderLeftColor =
-                        `${style.accent}55`;
-                      (e.currentTarget as HTMLElement).style.background =
-                        "var(--bg-card)";
+                      const el = e.currentTarget as HTMLElement;
+                      el.style.setProperty(
+                        "border-left",
+                        `3px solid ${trackStyle.dim}`
+                      );
+                      el.style.setProperty("background", "var(--bg-card)");
+                      el.style.setProperty("box-shadow", "var(--shadow-sm)");
                     }}
                   >
                     <div
@@ -529,9 +640,9 @@ export default function Home() {
                         <span
                           style={{
                             fontSize: 11,
-                            fontWeight: 600,
-                            color: style.accent,
-                            letterSpacing: "0.02em",
+                            fontWeight: 700,
+                            color: trackStyle.accent,
+                            letterSpacing: "0.03em",
                           }}
                         >
                           {session.time}
@@ -547,7 +658,7 @@ export default function Home() {
                             fontWeight: 600,
                             color: "var(--text-primary)",
                             letterSpacing: "-0.01em",
-                            lineHeight: 1.4,
+                            lineHeight: 1.45,
                           }}
                         >
                           {highlight(session.title, query)}
@@ -557,7 +668,8 @@ export default function Home() {
                             margin: 0,
                             fontSize: 13,
                             color: "var(--text-secondary)",
-                            lineHeight: 1.65,
+                            lineHeight: 1.7,
+                            fontWeight: 400,
                           }}
                         >
                           {highlight(session.description, query)}
@@ -569,13 +681,14 @@ export default function Home() {
                           <span
                             style={{
                               fontSize: 10,
-                              fontWeight: 600,
-                              color: style.accent,
-                              background: style.badge,
+                              fontWeight: 700,
+                              color: trackStyle.accent,
+                              background: trackStyle.dim,
                               padding: "2px 7px",
                               borderRadius: 4,
-                              letterSpacing: "0.04em",
+                              letterSpacing: "0.05em",
                               whiteSpace: "nowrap",
+                              textTransform: "uppercase",
                             }}
                           >
                             {TRACK_DISPLAY_NAMES[trackId]}
@@ -595,7 +708,7 @@ export default function Home() {
       <footer
         style={{
           borderTop: "1px solid var(--border-subtle)",
-          padding: "20px 24px",
+          padding: "24px 24px",
           textAlign: "center",
         }}
       >
@@ -604,7 +717,8 @@ export default function Home() {
             margin: 0,
             fontSize: 12,
             color: "var(--text-muted)",
-            letterSpacing: "0.02em",
+            letterSpacing: "0.03em",
+            fontWeight: 500,
           }}
         >
           AWS Mainframe Modernization Partner Conference
